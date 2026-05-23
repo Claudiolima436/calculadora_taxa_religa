@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de Taxa de Religação</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: white;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 450px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 28px;
+    }
+
+    .campo {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #22c55e;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #16a34a;
+      transform: scale(1.02);
+    }
+
+    .resultado {
+      margin-top: 25px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .resultado h2 {
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    .taxa {
+      font-size: 42px;
+      font-weight: bold;
+      color: #4ade80;
+    }
+
+    .info {
+      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .rodape {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .taxa {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>📊 Taxa de Religação</h1>
+    <p style="text-align:center; margin-bottom:20px; opacity:0.8; font-size:14px;">
+      Base de cálculo considerando cortes efetivados em HD + Ramal dentro do período analisado.
+    </p>
+
+    <div class="campo">
+      <label for="cortesHD">Cortes Efetivados em HD</label>
+      <input type="number" id="cortesHD" placeholder="Digite a quantidade" />
+    </div>
+
+    <div class="campo">
+      <label for="cortesRamal">Cortes Efetivados no Ramal</label>
+      <input type="number" id="cortesRamal" placeholder="Digite a quantidade" />
+    </div>
+
+    <div class="campo">
+      <label for="religacoes">Quantidade de Religações</label>
+      <input type="number" id="religacoes" placeholder="Digite a quantidade" />
+    </div>
+
+    <button onclick="calcularTaxa()">Calcular Taxa</button>
+
+    <div class="resultado">
+      <h2>Resultado</h2>
+      <div class="taxa" id="resultado">0%</div>
+      <div class="info" id="detalhes">
+        Informe os dados para calcular.
+      </div>
+    </div>
+
+    <div class="rodape">
+      Calculadora simples de desempenho operacional
+    </div>
+  </div>
+
+  <script>
+    function calcularTaxa() {
+      const cortesHD = parseFloat(document.getElementById('cortesHD').value) || 0;
+      const cortesRamal = parseFloat(document.getElementById('cortesRamal').value) || 0;
+      const cortes = cortesHD + cortesRamal;
+      const religacoes = parseFloat(document.getElementById('religacoes').value);
+
+      if (cortes <= 0) {
+        alert('Informe uma quantidade válida de cortes em HD ou Ramal.');
+        return;
+      }
+
+      if (isNaN(religacoes) || religacoes < 0) {
+        alert('Informe uma quantidade válida de religações.');
+        return;
+      }
+
+      const taxa = (religacoes / cortes) * 100;
+
+      document.getElementById('resultado').innerText = taxa.toFixed(2) + '%';
+      document.getElementById('detalhes').innerText =
+        `${religacoes} religações para ${cortes} cortes efetivados (${cortesHD} HD + ${cortesRamal} Ramal).`;
+
+      localStorage.setItem('cortesHD', cortesHD);
+      localStorage.setItem('cortesRamal', cortesRamal);
+      localStorage.setItem('cortes', cortes);
+      localStorage.setItem('religacoes', religacoes);
+      localStorage.setItem('resultado', taxa.toFixed(2));
+    }
+
+    window.onload = function () {
+      const cortesHD = localStorage.getItem('cortesHD');
+      const cortesRamal = localStorage.getItem('cortesRamal');
+      const cortes = localStorage.getItem('cortes');
+      const religacoes = localStorage.getItem('religacoes');
+      const resultado = localStorage.getItem('resultado');
+
+      if (cortesHD) document.getElementById('cortesHD').value = cortesHD;
+      if (cortesRamal) document.getElementById('cortesRamal').value = cortesRamal;
+      if (religacoes) document.getElementById('religacoes').value = religacoes;
+
+      if (resultado) {
+        document.getElementById('resultado').innerText = resultado + '%';
+        document.getElementById('detalhes').innerText =
+          `${religacoes} religações para ${cortes} cortes efetivados (${cortesHD} HD + ${cortesRamal} Ramal).`;
+      }
+    }
+  </script>
+
+</body>
+</html>
