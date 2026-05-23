@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calculadora de Taxa de Religação</title>
+  <link rel="manifest" href="manifest.json" />
   <style>
     * {
       margin: 0;
@@ -210,6 +211,16 @@
       }
     }
   </script>
-
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').then(registration => {
+        console.log('Aplicativo registrado com sucesso');
+      }).catch(err => {
+        console.log('Falha ao registrar aplicativo', err);
+      });
+    });
+  }
+</script>
 </body>
 </html>
